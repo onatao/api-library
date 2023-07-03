@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.devnatao.library.controller.BookController;
+import com.devnatao.library.dto.BookMinimalDTO;
 import com.devnatao.library.dto.BookModelDTO;
 import com.devnatao.library.mapper.DozerMapper;
 import com.devnatao.library.model.BookModel;
@@ -28,8 +29,8 @@ public class BookService {
 	public BookModel create(BookModelDTO data) {
 		var entity = DozerMapper.parseObject(data, BookModel.class);
 		
-		UUID uuid = UUID.randomUUID();
-		entity.setBookId(uuid);
+		// UUID uuid = UUID.randomUUID();
+		entity.setBookId(UUID.randomUUID());
 		
 		entity.add(
 				linkTo
@@ -81,17 +82,11 @@ public class BookService {
 	}
 	
 	@Transactional(readOnly = true)
-	public List<BookModel> findAll() {
-		List<BookModel> responseList = repository.findAll();
+	public List<BookMinimalDTO> findAll() {
+		List<BookMinimalDTO> minList = DozerMapper.parseListObjects(repository.findAll(), BookMinimalDTO.class);
 		
-		responseList.stream().map(o -> o.add(
-				linkTo(
-						methodOn(
-								BookController.class)
-						.findBookById(o.getBookId()))
-				.withSelfRel()))
-		.collect(Collectors.toList());
-		
-		return responseList;
+		// responseList.stream().map(o -> o.add(linkTo(methodOn(BookController.class).findBookById(o.getBookId())).withSelfRel())).collect(Collectors.toList());
+		minList.stream().map(o -> o.add(linkTo(methodOn(BookController.class).findBookById(o.getBookId())).withSelfRel())).collect(Collectors.toList());
+		return minList;
 	}
 }

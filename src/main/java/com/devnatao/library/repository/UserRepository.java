@@ -6,10 +6,10 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.devnatao.library.model.BookModel;
+import com.devnatao.library.model.UserModel;
 
 @Repository
-public interface BookRepository extends JpaRepository<BookModel, UUID>{
-	
-	Optional<BookModel> findBookByTitle(String tile);
+public interface UserRepository extends JpaRepository<UserModel, UUID>{
+
+	Optional<UserModel> findByUsername(String username);
 }
