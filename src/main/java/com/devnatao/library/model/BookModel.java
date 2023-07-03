@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
 
+import org.springframework.hateoas.RepresentationModel;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -13,7 +15,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "TB_BOOKS")
-public class BookModel implements Serializable {
+public class BookModel extends RepresentationModel<BookModel> implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	@Id
