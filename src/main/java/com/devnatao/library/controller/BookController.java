@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.devnatao.library.dto.BookMinimalDTO;
 import com.devnatao.library.dto.BookModelDTO;
 import com.devnatao.library.model.BookModel;
 import com.devnatao.library.service.BookService;
@@ -48,7 +49,7 @@ public class BookController {
 	}
 	
 	@GetMapping
-	public ResponseEntity<List<BookModel>> findAllRegisteredBooks() {
+	public ResponseEntity<List<BookMinimalDTO>> findAllRegisteredBooks() {
 		return ResponseEntity.status(HttpStatus.OK).body(service.findAll());
 	}
 }
