@@ -1,13 +1,18 @@
 package com.devnatao.library.service;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.devnatao.library.controller.BookController;
 import com.devnatao.library.dto.BookModelDTO;
 import com.devnatao.library.mapper.DozerMapper;
 import com.devnatao.library.model.BookModel;
@@ -25,6 +30,12 @@ public class BookService {
 		
 		UUID uuid = UUID.randomUUID();
 		entity.setBookId(uuid);
+		
+		entity.add(
+				linkTo
+				(methodOn(
+						BookController.class).findBookById(
+								entity.getBookId())).withSelfRel());
 		
 		return repository.save(entity);
 	}
@@ -46,18 +57,41 @@ public class BookService {
 		entity.setEditorial(data.getEditorial());
 		entity.setPublishedYear(data.getPublishedYear());
 		
+		entity.add(
+				linkTo(
+						methodOn(
+								BookController.class).findBookById(
+										entity.getBookId())).withSelfRel());
+		
 		return entity;
 	}
 	
 	@Transactional(readOnly = true)
 	public BookModel findById(UUID id) {
 		Optional<BookModel> optionalEntity = repository.findById(id);
-		return optionalEntity.get();
+		var entity = optionalEntity.get();
+		
+		entity.add(
+				linkTo(
+						methodOn(
+								BookController.class)
+						.findAllRegisteredBooks()).withRel("Voltar ao catálogo de livros"));
+		
+		return entity;
 	}
 	
 	@Transactional(readOnly = true)
 	public List<BookModel> findAll() {
 		List<BookModel> responseList = repository.findAll();
+		
+		responseList.stream().map(o -> o.add(
+				linkTo(
+						methodOn(
+								BookController.class)
+						.findBookById(o.getBookId()))
+				.withSelfRel()))
+		.collect(Collectors.toList());
+		
 		return responseList;
 	}
 }
